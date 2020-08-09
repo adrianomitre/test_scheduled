@@ -1,36 +1,14 @@
 name: Other
 
 on:
-  pull_request:
-  push:
-    branches:
-      - master
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '*/5 * * * *'
 
 jobs:
   mix_test:
-    name: mix test (Elixir ${{matrix.elixir}} | Erlang/OTP ${{matrix.otp}})
+    name: Scheduled job
     runs-on: ubuntu-latest
-    env:
-      MIX_ENV: test
-    strategy:
-      matrix:
-        include:
-          - elixir: 1.10.4
-            otp: 21.3.8.17
-          - elixir: 1.10.4
-            otp: 23.0.3
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-elixir@v1
-        with:
-          otp-version: ${{matrix.otp}}
-          elixir-version: ${{matrix.elixir}}
-      - run: mix format --check-formatted
-      - name: Install Dependencies
-        run: |
-          mix local.hex --force
-          mix local.rebar --force
-          mix deps.get --only test
-      - name: Compile without warnings
-        run: mix compile --warnings-as-errors
-      - run: mix test
+      - run: echo 42
+      - run: fail_miserably
